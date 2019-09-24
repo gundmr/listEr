@@ -1,26 +1,30 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser'); //enables you to get info from body
-const path = require('path')
+const path = require('path');
+const config = require('config');
 
-const items = require('./routes/api/items');
 
 const app = express();
 
 //bodyParser middleware
-app.use(bodyParser.json());
+app.use(express.json());
 
 // MongoDB URI - need this to connect too
-const db = require('./config/keys').mongoURI;
+const db = config.get('mongoURI');
 
-// conect to mongo
+// CONNECT to mongo
 mongoose
-    .connect(db)
+    .connect(db, {
+        useNewUrlParser: true,
+        useCreateIndex: true
+    })
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
 
 // USE ROUTES
-app.use('/api/items', items); //set to items variable above
+app.use('/api/items', require('./routes/api/items'));
+app.use('/api/users', require('./routes/api/users'));
+app.use('/api/auth', require('./routes/api/auth'));
 
 // SERVE STATIC ASSETS IF IN PRODUCTION
 if(process.env.NODE_ENV === 'production') {
