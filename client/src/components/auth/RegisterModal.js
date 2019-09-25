@@ -8,10 +8,13 @@ import {
     FormGroup,
     Label,
     Input,
-    NavLink
+    NavLink, 
+    Alert
 } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { register } from '../../actions/authActions';
+import { clearErrors } from '../../actions/errorActions';
 
 
 class RegisterModal extends Component {
@@ -20,15 +23,38 @@ class RegisterModal extends Component {
         name: '',
         email: '',
         password: '',
-        mgs: null
+        msg: null
     };
 
     static propTypes = {
         isAuthenticated: PropTypes.bool,
-        error: PropTypes.object.isRequired
+        error: PropTypes.object.isRequired,
+        register: PropTypes.func.isRequired,
+        clearErrors: PropTypes.func.isRequired
+    }
+
+    // map error state to props to see if changed
+    componentDidUpdate(prevProps) {
+        const { error, isAuthenticated } = this.props;
+        if(error !== prevProps.error) {
+            // Check for register error
+            if(error.id === 'REGISTER_FAIL') {
+                this.setState({ msg: error.msg.msg });
+            } else {
+                this.setState({ msg: null });
+            }
+        }
+        //checking if modal is open - if open checks auth then toggles closed
+        if(this.state.modal){
+            if(isAuthenticated){
+                this.toggle();
+            }
+        }
     }
 
     toggle = () => {
+        // Clear errors
+        this.props.clearErrors();
         this.setState({
             modal: !this.state.modal
         });
@@ -41,10 +67,19 @@ class RegisterModal extends Component {
     onSubmit = e => {
         e.preventDefault();
 
+        const { name, email, password } = this.state;
 
-        //Close modal
-        this.toggle();
-    }
+        // Create user object
+        const newUser = {
+            name,
+            email,
+            password,
+        };
+
+        // Attempt to register
+        this.props.register(newUser);
+
+    };
 
     render() {
         return(
@@ -63,6 +98,8 @@ class RegisterModal extends Component {
                     </ModalHeader>
 
                     <ModalBody>
+                        { this.state.msg ? (<Alert color="danger">{this.state.msg}</Alert>) : null}
+
                         <Form onSubmit={this.onSubmit}>
                             <FormGroup>
                                 <Label for="name">Name</Label>
@@ -71,6 +108,7 @@ class RegisterModal extends Component {
                                     name="name"
                                     id="name"
                                     plaeholder="Name"
+                                    className="mb-3"
                                     onChange={this.onChange}
                                 />
 
@@ -80,6 +118,7 @@ class RegisterModal extends Component {
                                     name="email"
                                     id="email"
                                     plaeholder="Email"
+                                    className="mb-3"
                                     onChange={this.onChange}
                                 />
 
@@ -89,6 +128,7 @@ class RegisterModal extends Component {
                                     name="password"
                                     id="password"
                                     plaeholder="Password"
+                                    className="mb-3"
                                     onChange={this.onChange}
                                 />
 
@@ -113,4 +153,4 @@ const mapStateToProps = state => ({
     error: state.error
 });
 
-export default connect(mapStateToProps, {  })(RegisterModal);
+export default connect(mapStateToProps, { register, clearErrors })(RegisterModal);
