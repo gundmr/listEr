@@ -33,7 +33,7 @@ router.post('/', (req, res) => {
                         { id: user.id },
                         config.get('jwtSecret'),
                         //token will only last for 1hr (may not need?)
-                        { expiresIn: 3600 },
+                        // { expiresIn: 3600 },
                         (err, token) => {
                             if (err) throw err;
                             res.json({
@@ -46,8 +46,6 @@ router.post('/', (req, res) => {
                             });
                         }
                     )
-
-
                 })
         })
 });

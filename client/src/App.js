@@ -19,6 +19,7 @@ class App extends Component {
   componentDidMount() {
     store.dispatch(loadUser());
   }
+
   render() {
     return (
       <Provider store={store}>
@@ -32,7 +33,7 @@ class App extends Component {
         </div>
       </Provider>
     );
-  };
-};
+  }
+}
 
 export default App;

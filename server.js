@@ -13,8 +13,12 @@ app.use(express.json());
 const db = config.get('mongoURI');
 
 // CONNECT to mongo
+
+mongoose.set('useUnifiedTopology', true);
+
 mongoose
     .connect(db, {
+        useUnifiedTopology: true,
         useNewUrlParser: true,
         useCreateIndex: true
     })

@@ -6,6 +6,11 @@ import { getItems, deleteItem } from '../actions/itemActions';
 import PropTypes from 'prop-types';
 
 class List extends Component {
+    static propTypes = {
+        getItems: PropTypes.func.isRequired,
+        item: PropTypes.object.isRequired,
+        isAuthenticated: PropTypes.bool
+    };
 
     // dispact getitems to reducer and brings it into component - run in lifecycle method: componentDidMount
     componentDidMount() {
@@ -22,17 +27,20 @@ class List extends Component {
         return(
             <Container>
                     <ListGroup>
-                        <TransitionGroup className="shopping-list">
+                        <TransitionGroup className="list">
                         {items.map(({ _id, name }) => (
                             <CSSTransition key={_id} timeout={500} classNames="fade">
                                 <ListGroupItem>
 
-                                <Button 
-                                    className="remove-btn" 
-                                    color="danger" 
-                                    size="sm" 
-                                    onClick={this.onDeleteClick.bind(this, _id)}>
-                                &times;</Button>
+                                    {this.props.isAuthenticated ? (
+                                        <Button 
+                                            className="remove-btn" 
+                                            color="danger" 
+                                            size="sm" 
+                                            onClick={this.onDeleteClick.bind(this, _id)}>
+                                        &times;</Button>
+                                    ) : null}
+
                                     {name}
                                 </ListGroupItem>
 
@@ -46,14 +54,16 @@ class List extends Component {
     }
 }
 
-List.propTypes = {
-    getItems: PropTypes.func.isRequired,
-    item: PropTypes.object.isRequired //mapping redux state to component property
-}
+// List.propTypes = {
+//     getItems: PropTypes.func.isRequired,
+//     item: PropTypes.object.isRequired 
+//     //mapping redux state to component property
+// }
 
 const mapStateToProps = (state) => ({
     // has to match in index.js what we called reducer (in export)
-    item: state.item
+    item: state.item,
+    isAuthenticated: state.auth.isAuthenticated
 });
 
 export default connect(mapStateToProps, { getItems, deleteItem })(List);

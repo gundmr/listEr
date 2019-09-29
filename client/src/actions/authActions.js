@@ -19,7 +19,8 @@ export const loadUser = () => (dispatch, getState) => {
     
 
     axios.get('/api/auth/user', tokenConfig(getState))
-        .then(res => dispatch({
+        .then(res => 
+            dispatch({
             type: USER_LOADED,
             payload: res.data
         }))
@@ -36,15 +37,16 @@ export const register = ({ name, email, password }) => dispatch => {
     // Headers
     const config = {
         headers: {
-            'Content-Type': 'application/json'
+            'Content-type': 'applicaiton/json'
         }
-    }
+    };
 
     // Request Body
     const body = JSON.stringify({ name, email, password });
 
     axios.post('/api/users', body, config)
-        .then(res => dispatch({
+        .then(res => 
+            dispatch({
             type: REGISTER_SUCCESS,
             payload: res.data
         }))
@@ -54,7 +56,37 @@ export const register = ({ name, email, password }) => dispatch => {
                 type: REGISTER_FAIL
             });
         });
-}
+};
+
+// Login User
+export const login = ({ email, password }) => dispatch => {
+    // Headers
+    const config = {
+        headers: {
+            'Content-type': 'applicaiton/json'
+        }
+    };
+
+    // Request Body
+    const body = JSON.stringify({ email, password });
+
+    axios
+        .post('/api/auth', body, config)
+        .then(res => 
+            dispatch({
+            type: LOGIN_SUCCESS,
+            payload: res.data
+        }))
+        .catch(err => {
+            dispatch(
+                returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')
+                );
+            dispatch({
+                type: LOGIN_FAIL
+            });
+        });
+};
+
 
 // Logout User
 export const logout = () => {
@@ -71,7 +103,7 @@ export const tokenConfig = getState => {
     // Header
     const config = {
         headers: {
-            "Content-type": "applicaiton/json"
+            'Content-type': 'applicaiton/json'
         }
     };
 
@@ -81,4 +113,4 @@ export const tokenConfig = getState => {
     }
 
     return config;
-}
+};
