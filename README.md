@@ -17,3 +17,6 @@ Install dependencies
 * [MongoDB](https://www.mongodb.com/)
 * [Javascript](https://www.javascript.com/)
 * [React](https://reactjs.org/)
+
+## Deployment
+Application deployed on Heroku: https://listapp-react-65111.herokuapp.com/
